@@ -20,7 +20,7 @@
                 <div class="form-group">
                     {% if messages %}
                     {% for message in messages %}
-                    <p class="{{ message.tags }}">{{ message }}</p
+                    <p class="{{ message.tags }}"><font color ='red'>{{ message }}</font></p
                     {% endfor %}
                     {% endif %}
                 <label>Name:</label>
@@ -40,7 +40,7 @@
             </form>
             </div>
             <div class="col">
-            <form class="" action="/" method="POST">
+            <form class="" action="/login" method="POST">
                 {% csrf_token %}
                 Email Login: <input type="text" class="form-control" name="email" value=""><br>
                 Password: <input type="password" class="form-control" name="password" value=""><br>

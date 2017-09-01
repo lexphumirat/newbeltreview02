@@ -20,3 +20,13 @@ def register(request):
         request.session['id'] = new_user.id
         messages.success(request, 'thank you {} for registering'.format(new_user.full_name))
     return redirect('/')
+
+def login(request):
+    result = User.objects.validate_login(request.POST)
+    if result[0]:
+        for e in result[0]:
+            messages.error(request, e)
+    else:
+        request.session['id'] = result[1].id
+        messages.success(request, 'welcome back {}'.format(result[1].full_name))
+    return render(request, 'beltreviewapp/friends.html')

@@ -9,6 +9,9 @@ class UserManger(models.Manager):
     #send info over to views def register
     def validate_reg(self, post_data):
         errors = []
+        # email exist
+        if self.filter(email=post_data['email']):
+            errors.append('email exist already')
         #username and alias must be 2 or more
         if len(post_data['full_name']) < 2:
             errors.append('username must be 2 or more characters')
@@ -22,6 +25,21 @@ class UserManger(models.Manager):
             errors.append('password must match')
         return errors
 
+    def validate_login(self, post_data):
+        #email is not in system
+        errors = []
+        the_user = None
+        if not self.filter(email=post_data['email']):
+            errors.append('incorrect email or password')
+        else:
+            the_user = self.get(email=post_data['email'])
+            if bcrypt.checkpw(post_data['password'].encode(), the_user.password.encode()):
+                errors.append('incorrect email or password')
+                the_user = None
+                #password is incorrect
+
+        return (errors, the_user)
+
     def create_user(self, clean_data):
         hashed = bcrypt.hashpw(clean_data['password'].encode(), bcrypt.gensalt())
         return self.create(
@@ -31,6 +49,7 @@ class UserManger(models.Manager):
             password = hashed,
             dob = clean_data['dob']
         )
+
 
 class User(models.Model):
     full_name = models.CharField(max_length=100, unique=True)
